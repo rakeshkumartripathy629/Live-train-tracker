@@ -1,5 +1,27 @@
 # RailGaadi — Deploy to AWS EC2 (Production)
 
+## Quick live in 2 minutes (free, no server, no card)
+
+Run the app on this PC (Docker Compose on port 80) and expose it with a free
+Cloudflare Tunnel — you get a public HTTPS URL instantly:
+
+```powershell
+# start the tunnel (opens the URL in your browser)
+powershell -ExecutionPolicy Bypass -File deploy\tunnel.ps1
+
+# check URL / stop it
+powershell -ExecutionPolicy Bypass -File deploy\tunnel.ps1 -Status
+powershell -ExecutionPolicy Bypass -File deploy\tunnel.ps1 -Stop
+```
+
+Caveats: the URL changes whenever the tunnel restarts (PC reboot); the PC must
+stay on; works great for demos. For a stable URL, use a named tunnel (free,
+needs a domain on Cloudflare) or the EC2 deployment below.
+
+---
+
+## EC2 production deployment
+
 Real production deployment on a single EC2 instance:
 
 ```
