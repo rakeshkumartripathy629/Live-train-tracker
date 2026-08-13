@@ -22,29 +22,31 @@ needs a domain on Cloudflare) or the EC2 deployment below.
 
 ## Branch workflow (dev → staging → production)
 
-Three long-lived branches, protected on GitHub:
+Three long-lived branches, protected on GitHub (`production` is the default branch):
 
 | Branch | Role | Env file |
 |---|---|---|
 | `dev` | **Development** — daily coding, rough work | `.env.local` (local dev) |
 | `staging` | **Staging** — test everything here before release | `.env.staging` → uploaded as `.env` |
-| `main` | **Production** — only merged after staging passes | `.env.production` → uploaded as `.env` |
+| `production` | **Production (live)** — only merged after staging passes | `.env.production` → uploaded as `.env` |
 
 Development flow:
 
 ```bash
-git checkout dev               # coding happens here (or a feature branch → merge to dev)
+git checkout dev                 # coding happens here (or a feature branch → merge to dev)
 # ... code + tests ...
 git push origin dev
-git checkout staging           # promote to staging for testing
+git checkout staging             # promote to staging for testing
 git merge dev
-git push origin staging        # deploy staging server:
+git push origin staging          # deploy staging server:
 #   git clone -b staging ... && ./deploy/setup.sh   (uses .env.staging as .env)
 #   ... test the staging URL ...
-git checkout main              # staging passed → promote to production
+git checkout production          # staging passed → promote to production (live)
 git merge staging
-git push origin main           # deploy production server (./deploy/deploy.sh)
+git push origin production       # deploy production server (./deploy/deploy.sh)
 ```
+
+(Or use `deploy/promote.ps1` — one command per step: `-All`, `-Prod`, or no flag for dev→staging.)
 
 Generating the two env files (from your local `backend/.env` + `frontend/.env.local`):
 

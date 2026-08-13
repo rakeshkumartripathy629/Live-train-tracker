@@ -1,9 +1,9 @@
 # RailGaadi — promote code between branches
-#   dev -> staging -> main (production)
+#   dev -> staging -> production (live)
 #
 #   powershell -File deploy\promote.ps1            # dev -> staging (test)
-#   powershell -File deploy\promote.ps1 -Prod      # staging -> main (production)
-#   powershell -File deploy\promote.ps1 -All       # dev -> staging -> main
+#   powershell -File deploy\promote.ps1 -Prod      # staging -> production (live)
+#   powershell -File deploy\promote.ps1 -All       # dev -> staging -> production
 #   powershell -File deploy\promote.ps1 -Status    # where each branch is
 
 param(
@@ -15,7 +15,7 @@ param(
 function Show-Status {
     Write-Output "Branches (remote):"
     git fetch origin
-    foreach ($b in @('dev', 'staging', 'main')) {
+    foreach ($b in @('dev', 'staging', 'production')) {
         $local = git rev-parse --short "$b" 2>$null
         $remote = git rev-parse --short "origin/$b" 2>$null
         Write-Output ("  {0,-8} local={1}  remote={2}  {3}" -f $b, $local, $remote, $(if ($local -eq $remote) { "IN SYNC" } else { "DIFFERS" }))
@@ -36,9 +36,9 @@ function Promote($from, $to) {
 
 if ($All) {
     Promote 'dev' 'staging'
-    Promote 'staging' 'main'
+    Promote 'staging' 'production'
 } elseif ($Prod) {
-    Promote 'staging' 'main'
+    Promote 'staging' 'production'
 } else {
     Promote 'dev' 'staging'
 }
