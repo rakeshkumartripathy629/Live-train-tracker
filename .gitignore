@@ -30,6 +30,7 @@ fe-build.log
 **/.env.local
 **/.env.*.local
 **/.env.production
+**/.env.staging
 
 # Vercel
 .vercel

@@ -1,13 +1,21 @@
-# RailGaadi — generate deploy/.env.production from your local dev env files
-# (backend/.env + frontend/.env.local). Run on Windows:  powershell -File deploy\generate-prod-env.ps1
+# RailGaadi — generate deploy/.env.production (or .env.staging) from your local
+# dev env files (backend/.env + frontend/.env.local). Run on Windows:
+#   powershell -File deploy\generate-prod-env.ps1            # production
+#   powershell -File deploy\generate-prod-env.ps1 -Staging   # staging
 # The generated file contains real secrets — it is gitignored. Upload it to the
 # EC2 server as `.env` (repo root). Never commit or share it.
+
+param(
+    [switch]$Staging
+)
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $backendEnv = Join-Path $root 'backend\.env'
 $frontendEnv = Join-Path $root 'frontend\.env.local'
-$out = Join-Path $PSScriptRoot '.env.production'
+$out = if ($Staging) { Join-Path $PSScriptRoot '.env.staging' } else { Join-Path $PSScriptRoot '.env.production' }
+$label = if ($Staging) { 'staging' } else { 'production' }
+$placeholder = if ($Staging) { 'staging.CHANGE_ME' } else { 'CHANGE_ME' }
 
 function Read-Env($path) {
     $map = @{}
@@ -32,11 +40,11 @@ $be = Read-Env $backendEnv
 $fe = Read-Env $frontendEnv
 
 $lines = @(
-    '# RailGaadi production env - generated from backend/.env + frontend/.env.local',
+    "# RailGaadi $label env - generated from backend/.env + frontend/.env.local",
     'PUBLIC_IP=CHANGE_ME',
-    'NEXTAUTH_URL=http://CHANGE_ME',
-    'NEXT_PUBLIC_API_URL=http://CHANGE_ME/api/v1',
-    'CORS_ORIGINS=http://CHANGE_ME',
+    "NEXTAUTH_URL=http://$placeholder",
+    "NEXT_PUBLIC_API_URL=http://$placeholder/api/v1",
+    "CORS_ORIGINS=http://$placeholder",
     '',
     "MONGODB_URI=$($be['MONGODB_URI'])",
     "RAILRADAR_API_KEY=$($be['RAILRADAR_API_KEY'])",

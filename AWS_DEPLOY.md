@@ -20,6 +20,41 @@ needs a domain on Cloudflare) or the EC2 deployment below.
 
 ---
 
+## Branch workflow (staging → production)
+
+Two long-lived branches, protected on GitHub:
+
+| Branch | Role | Env file |
+|---|---|---|
+| `main` | **Production** — only merged after staging passes | `.env.production` → uploaded as `.env` |
+| `staging` | **Staging** — test everything here first | `.env.staging` → uploaded as `.env` |
+
+Development flow:
+
+```bash
+git checkout staging          # work happens here (or a feature branch → merge to staging)
+# ... code + tests ...
+git push origin staging       # deploy staging server:
+#   git clone -b staging ... && ./deploy/setup.sh   (uses .env.staging as .env)
+#   ... test the staging URL ...
+git checkout main             # staging passed → promote
+git merge staging
+git push origin main          # deploy production server (./deploy/deploy.sh)
+```
+
+Generating the two env files (from your local `backend/.env` + `frontend/.env.local`):
+
+```powershell
+powershell -File deploy\generate-prod-env.ps1           # deploy/.env.production
+powershell -File deploy\generate-prod-env.ps1 -Staging  # deploy/.env.staging
+```
+
+Both are gitignored (never committed). Each server keeps its own `.env`.
+Use **separate MongoDB databases** for staging vs production (e.g. `railgaadi_staging`
+vs `railgaadi`) so staging tests never touch real data.
+
+---
+
 ## EC2 production deployment
 
 Real production deployment on a single EC2 instance:
