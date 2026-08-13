@@ -1,0 +1,50 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: railgaadi-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: railgaadi-backend
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      PORT: 4000
+      MONGODB_URI: mongodb://mongo:27017/railgaadi
+      RAILRADAR_API_KEY: ${RAILRADAR_API_KEY}
+      UPSTASH_REDIS_REST_URL: ${UPSTASH_REDIS_REST_URL:-}
+      UPSTASH_REDIS_REST_TOKEN: ${UPSTASH_REDIS_REST_TOKEN:-}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
+      VAPID_SUBJECT: ${VAPID_SUBJECT:-mailto:dev@railgaadi.in}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+    ports:
+      - "4000:4000"
+
+  # Uncomment when you want the web app containerized as well.
+  # web:
+  #   build: ./frontend
+  #   container_name: railgaadi-web
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - backend
+  #   environment:
+  #     NEXT_PUBLIC_API_URL: http://localhost:4000/api/v1
+  #     NEXT_PUBLIC_MAPTILER_API_KEY: ${NEXT_PUBLIC_MAPTILER_API_KEY:-}
+  #   ports:
+  #     - "3000:3000"
+
+volumes:
+  mongo-data:
