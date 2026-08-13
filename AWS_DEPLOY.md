@@ -20,26 +20,30 @@ needs a domain on Cloudflare) or the EC2 deployment below.
 
 ---
 
-## Branch workflow (staging → production)
+## Branch workflow (dev → staging → production)
 
-Two long-lived branches, protected on GitHub:
+Three long-lived branches, protected on GitHub:
 
 | Branch | Role | Env file |
 |---|---|---|
+| `dev` | **Development** — daily coding, rough work | `.env.local` (local dev) |
+| `staging` | **Staging** — test everything here before release | `.env.staging` → uploaded as `.env` |
 | `main` | **Production** — only merged after staging passes | `.env.production` → uploaded as `.env` |
-| `staging` | **Staging** — test everything here first | `.env.staging` → uploaded as `.env` |
 
 Development flow:
 
 ```bash
-git checkout staging          # work happens here (or a feature branch → merge to staging)
+git checkout dev               # coding happens here (or a feature branch → merge to dev)
 # ... code + tests ...
-git push origin staging       # deploy staging server:
+git push origin dev
+git checkout staging           # promote to staging for testing
+git merge dev
+git push origin staging        # deploy staging server:
 #   git clone -b staging ... && ./deploy/setup.sh   (uses .env.staging as .env)
 #   ... test the staging URL ...
-git checkout main             # staging passed → promote
+git checkout main              # staging passed → promote to production
 git merge staging
-git push origin main          # deploy production server (./deploy/deploy.sh)
+git push origin main           # deploy production server (./deploy/deploy.sh)
 ```
 
 Generating the two env files (from your local `backend/.env` + `frontend/.env.local`):
