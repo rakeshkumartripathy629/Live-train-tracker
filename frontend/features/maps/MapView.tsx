@@ -162,20 +162,28 @@ export default function MapView({ journey, className }: MapViewProps) {
     }
 
     if (!markerRef.current) {
+      const heading = journey.currentLocation?.heading ?? 0;
       const el = document.createElement('div');
       el.innerHTML = `
-        <div class="relative flex items-center justify-center w-10 h-10">
-          <div class="absolute inset-0 rounded-full bg-sky-500/30 animate-ping"></div>
-          <div class="relative flex h-9 w-9 items-center justify-center rounded-full bg-sky-500 text-white border-2 border-white shadow-lg text-lg">
-            🚄
+        <div class="relative flex items-center justify-center w-11 h-11">
+          <div class="absolute inset-0 rounded-full bg-sky-500/25 animate-ping"></div>
+          <div class="relative flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-rail-blue text-white border-2 border-white shadow-lg"
+               style="transform: rotate(${heading}deg)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect width="16" height="16" x="4" y="3" rx="2"></rect>
+              <path d="M4 11h16"></path><path d="M12 3v8"></path>
+              <path d="m8 19-2 3"></path><path d="m18 22-2-3"></path>
+              <path d="M8 15h.01"></path><path d="M16 15h.01"></path>
+            </svg>
           </div>
         </div>`;
 
       const popup = new maplibregl.Popup({ offset: 16, closeButton: false }).setHTML(`
-        <div class="p-2 font-sans">
-          <div class="font-bold text-xs">${journey.name}</div>
-          <div class="text-[11px] text-gray-500">#${journey.number}</div>
-          <div class="text-[11px] font-semibold text-sky-600 mt-0.5">
+        <div class="p-1 font-sans">
+          <div class="font-bold text-xs text-slate-900">${journey.name}</div>
+          <div class="font-mono text-[11px] text-slate-500">#${journey.number}</div>
+          <div class="text-[11px] font-semibold mt-0.5 ${journey.delayMinutes > 0 ? 'text-amber-600' : 'text-emerald-600'}">
             ${journey.speedKmh} km/h · Delay: ${journey.delayMinutes > 0 ? '+' + journey.delayMinutes + 'm' : 'On time'}
           </div>
         </div>`);

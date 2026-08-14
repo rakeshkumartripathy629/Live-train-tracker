@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { MapPin, Calendar, Clock, RefreshCw } from 'lucide-react';
@@ -7,6 +7,8 @@ import { useStationLiveBoard } from '@/hooks/useStationLiveBoard';
 import { Station } from '@/types/station';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Button } from '@/components/ui/Button';
 import { LiveBoardRow } from '@/components/station/LiveBoardRow';
 import { cn } from '@/utils/cn';
 
@@ -24,19 +26,13 @@ export function StationBoard() {
 
   return (
     <div className="space-y-6 py-4 max-w-4xl mx-auto">
-      <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rail-blue/10 text-rail-blue">
-          <MapPin className="h-6 w-6" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">Station Live Board</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Kisi bhi station pe abhi aane/jaane wali trains, platform aur delay
-          </p>
-        </div>
-      </div>
+      <PageHeader
+        icon={<MapPin />}
+        title="Station Live Board"
+        description="Kisi bhi station pe abhi aane/jaane wali trains, platform aur delay"
+      />
 
-      <div className="glass-panel rounded-3xl p-6 shadow-glass space-y-4">
+      <div className="glass-panel rounded-3xl p-5 sm:p-6 shadow-glass space-y-4">
         <StationSearchInput
           label="Select Station"
           value={station?.code || ''}
@@ -51,7 +47,7 @@ export function StationBoard() {
         />
 
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <Clock className="h-4 w-4 text-slate-400" />
             <span className="text-xs font-semibold text-slate-500 mr-1">Window:</span>
             {HOUR_OPTIONS.map((h) => (
@@ -59,7 +55,7 @@ export function StationBoard() {
                 key={h}
                 onClick={() => setHours(h)}
                 className={cn(
-                  'rounded-lg px-3 py-1.5 text-xs font-bold transition-colors',
+                  'rounded-lg px-3 py-1.5 text-xs font-bold transition-colors h-9',
                   hours === h
                     ? 'bg-rail-blue text-white shadow-glow'
                     : 'bg-slate-200 dark:bg-slate-800 text-slate-500 hover:text-rail-blue'
@@ -69,14 +65,15 @@ export function StationBoard() {
               </button>
             ))}
           </div>
-          <button
+          <Button
             onClick={() => refetch()}
-            disabled={isFetching}
-            className="inline-flex items-center gap-2 rounded-xl bg-rail-blue px-3.5 py-2 text-xs font-semibold text-white shadow-glow transition-all hover:bg-sky-600 disabled:opacity-60"
+            disabled={isFetching || !requested}
+            variant="primary"
+            size="md"
           >
             <RefreshCw className={cn('h-3.5 w-3.5', isFetching && 'animate-spin')} />
             Refresh
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -112,7 +109,7 @@ export function StationBoard() {
             </div>
             <div className="flex items-center gap-2 text-[11px] text-slate-400">
               <Calendar className="h-3.5 w-3.5" />
-              {data.window.from} → {data.window.to}
+              {data.window.from} â†’ {data.window.to}
               <span className="rounded-md bg-rail-blue/10 px-2 py-0.5 font-bold text-rail-blue">
                 {data.count} trains
               </span>
@@ -133,3 +130,4 @@ export function StationBoard() {
     </div>
   );
 }
+

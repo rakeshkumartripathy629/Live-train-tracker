@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -15,6 +15,8 @@ import {
 import { apiClient } from '@/lib/api-client';
 import { RequireAuth } from '@/components/auth/RequireAuth';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { EVENT_LABELS, NotificationItem } from '@/lib/alerts';
 import { useNotifications } from '@/hooks/useNotifications';
 import { cn } from '@/utils/cn';
@@ -77,19 +79,21 @@ export default function NotificationsPage() {
   return (
     <RequireAuth>
       <div className="mx-auto max-w-3xl space-y-6 py-4">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
           <Link
             href="/journeys"
-            className="inline-flex items-center gap-2 rounded-xl bg-slate-200/60 dark:bg-slate-800/60 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors w-fit"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:bg-slate-800 transition-colors w-fit"
           >
             <ArrowLeft className="h-4 w-4" /> Journeys
           </Link>
-          <h1 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-white">
-            <Bell className="h-5 w-5 text-rail-blue" /> Notifications
-          </h1>
+          <PageHeader
+            icon={<Bell />}
+            title="Notifications"
+            description="Journey alerts aur notifications â€” sab ek jagah"
+          />
         </div>
 
-        {/* ─── Preferences / push devices ─── */}
+        {/* â”€â”€â”€ Preferences / push devices â”€â”€â”€ */}
         <div className="glass-panel rounded-3xl p-6 shadow-glass space-y-3">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -98,9 +102,9 @@ export default function NotificationsPage() {
               </h2>
               <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
                 {prefsLoading
-                  ? 'Checking devices…'
+                  ? 'Checking devicesâ€¦'
                   : prefs?.push.enabled
-                  ? `${prefs.push.devices.length} device(s) registered — backend inhi ko bhejega.`
+                  ? `${prefs.push.devices.length} device(s) registered â€” backend inhi ko bhejega.`
                   : 'Koi active push device nahi. "Enable Alerts" se subscribe karo.'}
               </p>
             </div>
@@ -110,7 +114,7 @@ export default function NotificationsPage() {
                 disabled={disablePush.isPending}
                 className="rounded-xl border border-rose-500/40 px-3 py-2 text-[11px] font-bold text-rose-500 hover:bg-rose-500/10 transition-colors disabled:opacity-60"
               >
-                {disablePush.isPending ? 'Disabling…' : 'Disable Push'}
+                {disablePush.isPending ? 'Disablingâ€¦' : 'Disable Push'}
               </button>
             )}
           </div>
@@ -148,7 +152,7 @@ export default function NotificationsPage() {
           {prefsError && <p className="text-[11px] font-semibold text-rose-500">{prefsError}</p>}
         </div>
 
-        {/* ─── Notification history ─── */}
+        {/* â”€â”€â”€ Notification history â”€â”€â”€ */}
         <div className="glass-panel rounded-3xl p-6 shadow-glass space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-bold text-slate-900 dark:text-white">History</h2>
@@ -169,14 +173,11 @@ export default function NotificationsPage() {
               <Skeleton className="h-16 w-full rounded-2xl" />
             </div>
           ) : items.length === 0 ? (
-            <div className="flex flex-col items-center gap-2 py-8 text-slate-400">
-              <Inbox className="h-8 w-8" />
-              <p className="text-xs">Abhi koi notification nahi.</p>
-              <p className="text-[11px] text-center max-w-sm">
-                Journey detail page se alerts banao — jab real RailRadar data event trigger karega,
-                notification yahan dikhegi.
-              </p>
-            </div>
+            <EmptyState
+              icon={<Inbox />}
+              title="Koi notification nahi"
+              description="Journey detail page se alerts banao â€” jab real RailRadar data event trigger karega, notification yahan dikhegi."
+            />
           ) : (
             <ul className="space-y-2">
               {items.map((n) => (
@@ -192,7 +193,7 @@ export default function NotificationsPage() {
                 >
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-slate-900 dark:text-white">
-                      {EVENT_LABELS[n.eventType]?.icon || '🔔'}{' '}
+                      {EVENT_LABELS[n.eventType]?.icon || 'ðŸ””'}{' '}
                       {EVENT_LABELS[n.eventType]?.label || n.eventType}
                     </p>
                     <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">{n.message}</p>
@@ -213,7 +214,7 @@ export default function NotificationsPage() {
                           onClick={(e) => e.stopPropagation()}
                           className="font-semibold hover:underline"
                         >
-                          Journey →
+                          Journey â†’
                         </Link>
                       )}
                     </div>
@@ -239,3 +240,4 @@ export default function NotificationsPage() {
     </RequireAuth>
   );
 }
+

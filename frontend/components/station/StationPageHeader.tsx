@@ -58,10 +58,11 @@ export function StationPageHeader({ detail, isLoading, streamState }: StationPag
         </span>
       </div>
 
-      <div className="glass-panel rounded-3xl p-6 shadow-glass flex flex-col sm:flex-row sm:items-center gap-4">
+      <div className="glass-panel rounded-3xl p-5 sm:p-6 shadow-glass flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex items-center gap-4 flex-1 min-w-0">
-          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-rail-blue/10 text-rail-blue">
+          <div className="relative flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-rail-gradient text-white shadow-soft ring-1 ring-white/20 dark:ring-white/10">
             <MapPin className="h-7 w-7" />
+            <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-white/20" />
           </div>
           <div className="min-w-0">
             {isLoading && !detail ? (

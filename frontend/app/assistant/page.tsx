@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,7 @@ import {
 import { RequireAuth } from '@/components/auth/RequireAuth';
 import { AiChatMessage, AiToolEvent } from '@/lib/ai-client';
 import { useAssistantChat } from '@/hooks/useAssistantChat';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { cn } from '@/utils/cn';
 
 const QUICK_ACTIONS = [
@@ -64,7 +65,7 @@ function MessageBubble({ message }: { message: AiChatMessage }) {
         {message.content || (
           <span className="inline-flex items-center gap-2 text-slate-400">
             <Loader2 className="h-4 w-4 animate-spin" />
-            thinking…
+            thinkingâ€¦
           </span>
         )}
         {!isUser && message.sources && message.sources.length > 0 && (
@@ -147,19 +148,14 @@ function AssistantChat() {
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-4 py-2 md:py-4">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-500">
-            <Bot className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-xl font-extrabold text-slate-900 dark:text-white">AI Assistant</h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              Real data hi — koi fake answer nahi. Har answer live tools se aata hai.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
+      <div className="flex items-start justify-between gap-3">
+        <PageHeader
+          icon={<Bot />}
+          iconClass="bg-violet-500/10 text-violet-500"
+          title="AI Assistant"
+          description="Real data hi â€” koi fake answer nahi. Har answer live tools se aata hai."
+        />
+        <div className="flex items-center gap-2 flex-shrink-0">
           {conversations.length > 0 && (
             <select
               value={messages.length > 0 ? '' : ''}
@@ -176,7 +172,7 @@ function AssistantChat() {
           )}
           <button
             onClick={newChat}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 transition-colors"
           >
             <Plus className="h-3.5 w-3.5" />
             New
@@ -199,7 +195,7 @@ function AssistantChat() {
                 RailGaadi Assistant se poocho
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Live status · routes · trains between · station boards · analytics · weather · aapke journeys
+                Live status Â· routes Â· trains between Â· station boards Â· analytics Â· weather Â· aapke journeys
               </p>
             </div>
             <div className="grid w-full max-w-lg grid-cols-1 gap-2 sm:grid-cols-2">
@@ -207,9 +203,9 @@ function AssistantChat() {
                 <button
                   key={qa.prompt}
                   onClick={() => submit(qa.prompt)}
-                  className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs font-semibold text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-rail-blue/40 hover:text-rail-blue dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-500/40"
+                  className="flex items-start gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-left text-xs font-semibold text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-rail-blue/40 hover:text-rail-blue dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-sky-500/40"
                 >
-                  <span className="mr-1.5 text-sky-500">✦</span>
+                  <Sparkles className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-sky-500" />
                   {qa.label}
                 </button>
               ))}
@@ -307,7 +303,7 @@ function AssistantChat() {
 
       <p className="flex items-center gap-1.5 text-center text-[11px] text-slate-400">
         <Wrench className="h-3 w-3" />
-        Answers stream live from RailRadar + aapke account ki real data — assistant kabhi invent nahi karta.
+        Answers stream live from RailRadar + aapke account ki real data â€” assistant kabhi invent nahi karta.
       </p>
     </div>
   );
@@ -328,3 +324,4 @@ export default function AssistantPage() {
     </RequireAuth>
   );
 }
+

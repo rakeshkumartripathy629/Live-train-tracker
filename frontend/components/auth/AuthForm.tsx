@@ -4,8 +4,12 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signIn } from 'next-auth/react';
-import { Train, Loader2, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Loader2, AlertCircle, Eye, EyeOff, Train } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
+
+const INPUT_CLS =
+  'w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm outline-none transition-all placeholder:text-slate-400 focus:ring-2 focus:ring-rail-blue/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white';
 
 interface AuthFormProps {
   mode: 'login' | 'register';
@@ -68,10 +72,11 @@ export function AuthForm({ mode }: AuthFormProps) {
       <div className="glass-panel rounded-3xl p-8 shadow-glass space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-rail-blue text-white shadow-glow">
-            <Train className="h-7 w-7" />
+          <div className="relative mx-auto flex h-16 w-16 items-center justify-center overflow-hidden rounded-3xl bg-rail-gradient text-white shadow-glow ring-1 ring-white/20 dark:ring-white/10">
+            <Train className="h-8 w-8" />
+            <span className="pointer-events-none absolute inset-x-0 bottom-0 h-1 bg-white/20" />
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">
+          <h1 className="rail-heading text-2xl text-slate-900 dark:text-white">
             {mode === 'login' ? 'Welcome back' : 'Create your account'}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -101,7 +106,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your name"
-                className="w-full rounded-xl border border-slate-200 bg-slate-100/50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rail-blue focus:bg-white dark:border-slate-800 dark:bg-slate-900/50 dark:text-white dark:focus:bg-slate-900"
+                className={INPUT_CLS}
               />
             </div>
           )}
@@ -110,14 +115,14 @@ export function AuthForm({ mode }: AuthFormProps) {
             <label className="mb-1.5 block text-xs font-bold text-slate-600 dark:text-slate-300">
               Email
             </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full rounded-xl border border-slate-200 bg-slate-100/50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rail-blue focus:bg-white dark:border-slate-800 dark:bg-slate-900/50 dark:text-white dark:focus:bg-slate-900"
-            />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className={INPUT_CLS}
+              />
           </div>
 
           <div>
@@ -132,7 +137,7 @@ export function AuthForm({ mode }: AuthFormProps) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="At least 6 characters"
-                className="w-full rounded-xl border border-slate-200 bg-slate-100/50 px-4 py-3 pr-11 text-sm font-medium text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-rail-blue focus:bg-white dark:border-slate-800 dark:bg-slate-900/50 dark:text-white dark:focus:bg-slate-900"
+                className={cn(INPUT_CLS, 'pr-11')}
               />
               <button
                 type="button"
@@ -145,13 +150,11 @@ export function AuthForm({ mode }: AuthFormProps) {
             </div>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className={cn(
-              'w-full rounded-xl bg-rail-blue px-4 py-3 text-sm font-bold text-white shadow-glow transition-all',
-              'hover:bg-sky-600 active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none'
-            )}
+            size="lg"
+            className="w-full"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
@@ -163,7 +166,7 @@ export function AuthForm({ mode }: AuthFormProps) {
             ) : (
               'Create Account'
             )}
-          </button>
+          </Button>
         </form>
 
         {/* Switch mode */}

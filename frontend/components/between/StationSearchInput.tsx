@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Loader2, MapPin, X } from 'lucide-react';
+import { Loader2, MapPin, X, ChevronDown } from 'lucide-react';
 import { useStationSearch } from '@/hooks/useStationSearch';
 import { Station } from '@/types/station';
 import { cn } from '@/utils/cn';
@@ -38,7 +38,7 @@ export function StationSearchInput({
 
   return (
     <div ref={ref} className="relative flex-1">
-      <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+      <label className="mb-1.5 block text-[11px] font-bold uppercase tracking-wider text-slate-400">
         {label}
       </label>
       <div className="relative">
@@ -53,23 +53,26 @@ export function StationSearchInput({
           }}
           onFocus={() => setOpen(true)}
           placeholder={placeholder}
-          className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 py-3 pl-10 pr-9 text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-rail-blue/40"
+          className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-9 text-sm font-semibold text-slate-900 shadow-sm outline-none transition-shadow placeholder:text-slate-400 focus:ring-2 focus:ring-rail-blue/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
         />
-        {value && (
+        {value ? (
           <button
             onClick={() => {
               onClear();
               setQuery('');
             }}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-rose-500"
+            aria-label="Clear station"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-rose-500"
           >
             <X className="h-4 w-4" />
           </button>
+        ) : (
+          <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-300" />
         )}
       </div>
 
       {open && query.trim().length >= 1 && (
-        <div className="absolute left-0 right-0 top-full mt-2 z-50 max-h-64 overflow-y-auto rounded-2xl glass-panel p-2 shadow-glass-hover border border-slate-200 dark:border-slate-800">
+        <div className="glass-panel absolute left-0 right-0 top-full z-50 mt-2 max-h-64 overflow-y-auto rounded-2xl border border-slate-200 p-2 shadow-glass-hover dark:border-slate-800">
           {isLoading && (
             <div className="flex items-center justify-center gap-2 py-4 text-xs text-slate-400">
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -87,12 +90,12 @@ export function StationSearchInput({
                 setQuery(s.code);
                 setOpen(false);
               }}
-              className={cn(
-                'w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-rail-blue/10'
-              )}
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-colors hover:bg-rail-blue/10"
             >
-              <span className="font-mono text-xs font-bold text-rail-blue">{s.code}</span>
-              <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{s.name}</span>
+              <span className="rounded-lg bg-slate-100 px-2 py-1 font-mono text-[11px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                {s.code}
+              </span>
+              <span className="truncate text-sm font-semibold text-slate-700 dark:text-slate-200">{s.name}</span>
             </button>
           ))}
         </div>

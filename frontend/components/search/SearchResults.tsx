@@ -3,10 +3,11 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { ArrowRight, Train, Clock } from 'lucide-react';
+import { ArrowRight, Clock } from 'lucide-react';
 import { SearchResult } from '@/types/train';
 import { useSearchStore } from '@/store/search';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { TrainAvatar } from '@/components/ui/TrainAvatar';
 
 interface SearchResultsProps {
   results?: SearchResult[];
@@ -57,12 +58,10 @@ export function SearchResults({
             className="glass-panel group flex items-center justify-between rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-glass-hover"
           >
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-rail-blue/10 text-rail-blue transition-colors group-hover:bg-rail-blue group-hover:text-white">
-                <Train className="h-6 w-6" />
-              </div>
+              <TrainAvatar number={train.number} size="md" />
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-xs font-bold text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+                  <span className="rounded-md bg-rail-blue/10 px-2 py-0.5 font-mono text-xs font-bold text-rail-blue">
                     {train.number}
                   </span>
                   <h4 className="font-semibold text-slate-900 group-hover:text-rail-blue dark:text-white">

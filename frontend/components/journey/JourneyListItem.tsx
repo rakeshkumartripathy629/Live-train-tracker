@@ -3,8 +3,9 @@
 import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Train, ArrowRight, CalendarDays } from 'lucide-react';
+import { ArrowRight, CalendarDays } from 'lucide-react';
 import { Journey, JourneyStatus } from '@/types/journey';
+import { TrainAvatar } from '@/components/ui/TrainAvatar';
 import { cn } from '@/utils/cn';
 
 const STATUS_CHIP: Record<JourneyStatus, string> = {
@@ -26,9 +27,7 @@ export function JourneyListItem({ journey, index }: { journey: Journey; index: n
         className="glass-panel group flex items-center justify-between gap-3 rounded-2xl p-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-glass-hover"
       >
         <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-rail-blue/10 text-rail-blue group-hover:bg-rail-blue group-hover:text-white transition-colors">
-            <Train className="h-5 w-5" />
-          </div>
+          <TrainAvatar number={journey.trainNumber} size="md" />
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-mono text-[11px] font-bold text-rail-blue">

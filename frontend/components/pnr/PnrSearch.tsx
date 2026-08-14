@@ -1,9 +1,10 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Ticket, Search, Loader2, X, History } from 'lucide-react';
+import { Ticket, Search, X, History } from 'lucide-react';
 import { cn } from '@/utils/cn';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { usePnrStore } from '@/store/pnr';
 
 export function PnrSearch() {
@@ -26,19 +27,13 @@ export function PnrSearch() {
 
   return (
     <div className="space-y-6">
-      <div className="glass-panel rounded-3xl p-6 md:p-10 shadow-glass">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rail-blue/10 text-rail-blue">
-            <Ticket className="h-6 w-6" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">PNR Status</h1>
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              IRCTC PNR number dalo — booking status, coach &amp; berth turant dekho
-            </p>
-          </div>
-        </div>
+      <PageHeader
+        icon={<Ticket />}
+        title="PNR Status"
+        description="IRCTC PNR number dalo â€” booking status, coach & berth turant dekho"
+      />
 
+      <div className="glass-panel rounded-3xl p-5 md:p-8 shadow-glass">
         <div className="flex flex-col sm:flex-row gap-3 max-w-xl">
           <div className="relative flex-1">
             <div className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
@@ -55,7 +50,7 @@ export function PnrSearch() {
               }}
               onKeyDown={(e) => e.key === 'Enter' && submit()}
               placeholder="Enter 10-digit PNR number"
-              className="w-full rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900 py-3.5 pl-11 pr-10 text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-rail-blue/40"
+              className="w-full rounded-2xl border border-slate-200 bg-white py-3.5 pl-11 pr-10 text-sm font-semibold text-slate-900 shadow-sm outline-none placeholder:text-slate-400 focus:ring-2 focus:ring-rail-blue/40 dark:border-slate-700 dark:bg-slate-900 dark:text-white"
             />
             {value && (
               <button
@@ -70,13 +65,13 @@ export function PnrSearch() {
             onClick={() => submit()}
             disabled={!isValid}
             className={cn(
-              'inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold transition-all',
+              'inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold transition-all h-12',
               isValid
                 ? 'bg-rail-blue text-white shadow-glow hover:bg-sky-600 active:scale-95'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
             )}
           >
-            {false ? <Loader2 className="h-4 w-4 animate-spin" /> : <Ticket className="h-4 w-4" />}
+            <Ticket className="h-4 w-4" />
             Check Status
           </button>
         </div>
@@ -108,7 +103,7 @@ export function PnrSearch() {
                 <div className="min-w-0">
                   <span className="font-mono text-sm font-bold text-rail-blue block">{p.pnr}</span>
                   <span className="text-xs text-slate-500 dark:text-slate-400 truncate block">
-                    {p.trainNumber ? `#${p.trainNumber} · ` : ''}{p.trainName || 'PNR check'}
+                    {p.trainNumber ? `#${p.trainNumber} Â· ` : ''}{p.trainName || 'PNR check'}
                   </span>
                 </div>
                 <Search className="h-4 w-4 text-slate-400 flex-shrink-0 group-hover:text-rail-blue" />
@@ -120,3 +115,4 @@ export function PnrSearch() {
     </div>
   );
 }
+

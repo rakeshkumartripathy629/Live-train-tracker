@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           <AuthProvider>
             <Navbar />
-            <main className="flex-1 px-4 py-6 max-w-7xl mx-auto w-full pb-24 md:pb-6">
+            <main className="flex-1 px-3 sm:px-4 py-5 max-w-7xl mx-auto w-full pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:pb-8">
               {children}
             </main>
             <BottomNav />

@@ -1,0 +1,60 @@
+services:
+  backend:
+    build:
+      context: ../backend
+    container_name: railgaadi-staging-backend
+    restart: unless-stopped
+    env_file: .env.staging
+    environment:
+      PORT: 4000
+      NODE_ENV: staging
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:4000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 25s
+    networks:
+      - railgaadi_staging
+
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:?set NEXT_PUBLIC_API_URL in .env.staging}
+        NEXT_PUBLIC_MAPTILER_API_KEY: ${NEXT_PUBLIC_MAPTILER_API_KEY:-}
+    container_name: railgaadi-staging-frontend
+    restart: unless-stopped
+    env_file: .env.staging
+    environment:
+      API_URL: http://backend:4000/api/v1
+      NODE_ENV: staging
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3000/"]
+      interval: 15s
+      timeout: 5s
+      retries: 6
+      start_period: 40s
+    networks:
+      - railgaadi_staging
+
+  nginx:
+    image: nginx:alpine
+    container_name: railgaadi-staging-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      frontend:
+        condition: service_healthy
+    networks:
+      - railgaadi_staging
+
+networks:
+  railgaadi_staging:
+    driver: bridge

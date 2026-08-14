@@ -2,8 +2,10 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Train, ArrowRight, Calendar, Clock, MapPin, Bell, ShieldCheck, AlertTriangle, XCircle } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, MapPin, Bell, ShieldCheck, AlertTriangle, TrainFront } from 'lucide-react';
 import { PnrStatus } from '@/types/pnr';
+import { TrainAvatar } from '@/components/ui/TrainAvatar';
+import { Button } from '@/components/ui/Button';
 import { cn } from '@/utils/cn';
 
 interface PnrStatusCardProps {
@@ -31,9 +33,7 @@ export function PnrStatusCard({ status }: PnrStatusCardProps) {
     <div className="glass-panel rounded-3xl p-6 shadow-glass space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-rail-blue/10 text-rail-blue">
-            <Train className="h-5 w-5" />
-          </div>
+          <TrainAvatar number={train.number} size="md" />
           <div>
             <span className="font-mono text-xs font-bold text-rail-blue block">#{train.number}</span>
             <h2 className="font-extrabold text-lg text-slate-900 dark:text-white leading-tight">
@@ -74,7 +74,7 @@ export function PnrStatusCard({ status }: PnrStatusCardProps) {
         <Info icon={<Clock className="h-3.5 w-3.5" />} label="Class" value={train.className || '—'} />
         <Info icon={<MapPin className="h-3.5 w-3.5" />} label="Quota" value={train.quota || '—'} />
         <Info
-          icon={<Train className="h-3.5 w-3.5" />}
+          icon={<TrainFront className="h-3.5 w-3.5" />}
           label="Platform"
           value={train.expectedPlatform ? `Platform ${train.expectedPlatform}` : '—'}
         />
@@ -88,12 +88,11 @@ export function PnrStatusCard({ status }: PnrStatusCardProps) {
         </p>
       )}
 
-      <Link
-        href={`/train/${train.number}`}
-        className="flex items-center justify-center gap-2 rounded-2xl bg-rail-blue px-4 py-3 text-sm font-bold text-white shadow-glow transition-all hover:bg-sky-600 active:scale-95"
-      >
-        <Bell className="h-4 w-4" />
-        Track This Train Live
+      <Link href={`/train/${train.number}`} className="block">
+        <Button variant="primary" size="lg" className="w-full">
+          <Bell className="h-4 w-4" />
+          Track This Train Live
+        </Button>
       </Link>
     </div>
   );

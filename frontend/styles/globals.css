@@ -6,7 +6,8 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    /* Core shadcn-style surface tokens (kept for compatibility) */
+    --background: 210 40% 97.5%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -34,7 +35,24 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 199 89% 48%;
 
-    --radius: 0.875rem;
+    --radius: 0.9rem;
+
+    /* ── RailGaadi brand tokens ─────────────────────────── */
+    --rail-primary: 199 100% 40%;        /* deep railway blue   */
+    --rail-secondary: 199 94% 57%;       /* sky / travel blue   */
+    --rail-success: 160 84% 36%;         /* railway green       */
+    --rail-warning: 38 92% 44%;          /* amber               */
+    --rail-danger: 350 84% 54%;          /* red                 */
+    --rail-background: 210 40% 97.5%;    /* cool light gray     */
+    --rail-surface: 0 0% 100%;
+    --rail-surface-muted: 210 40% 96%;
+    --rail-border: 214 32% 90%;
+    --rail-text: 222 47% 9%;
+    --rail-muted: 215 20% 42%;
+    --rail-ring: 199 94% 55%;
+
+    --rail-shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px -8px rgba(15, 23, 42, 0.08);
+    --rail-shadow-lift: 0 2px 4px rgba(15, 23, 42, 0.05), 0 16px 40px -12px rgba(15, 23, 42, 0.16);
   }
 
   .dark {
@@ -65,6 +83,22 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 199 89% 48%;
+
+    --rail-primary: 199 95% 62%;
+    --rail-secondary: 199 92% 55%;
+    --rail-success: 158 84% 52%;
+    --rail-warning: 40 94% 58%;
+    --rail-danger: 350 86% 62%;
+    --rail-background: 222 47% 4%;
+    --rail-surface: 222 47% 8%;
+    --rail-surface-muted: 222 40% 13%;
+    --rail-border: 217 33% 19%;
+    --rail-text: 210 40% 97%;
+    --rail-muted: 215 20% 68%;
+    --rail-ring: 199 95% 58%;
+
+    --rail-shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+    --rail-shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 16px 40px -12px rgba(0, 0, 0, 0.6);
   }
 }
 
@@ -72,18 +106,59 @@
   * {
     @apply border-border;
   }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-bottom: 6rem;
+  }
+
   body {
-    @apply bg-background text-foreground antialiased selection:bg-rail-blue/20 selection:text-rail-blue;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    text-rendering: optimizeLegibility;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--rail-ring));
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  /* Numeric data reads better with tabular figures */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
   }
 }
 
-/* Glassmorphism custom classes */
+/* ───────────────────────────────────────────────────────────────────────────
+   RailGaadi component utilities
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Default card surface — the building block of the whole UI */
+.card-surface {
+  position: relative;
+  border-radius: 1.1rem;
+  border: 1px solid hsl(var(--rail-border));
+  background: hsl(var(--rail-surface));
+  box-shadow: var(--rail-shadow-soft);
+  transition: box-shadow 200ms ease, border-color 200ms ease, transform 200ms ease;
+}
+
+.card-surface:hover {
+  box-shadow: var(--rail-shadow-lift);
+}
+
+.card-surface-hover {
+  cursor: pointer;
+}
+
+/* Keep the legacy glass aesthetic where it's already used */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(226, 232, 240, 0.7);
 }
 
 .dark .glass-panel {
@@ -91,6 +166,114 @@
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Soft inner highlight for premium surfaces */
+.rail-sheen::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  pointer-events: none;
+}
+
+/* Page / section headings */
+.rail-heading {
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  color: hsl(var(--rail-text));
+}
+
+/* Skeleton shimmer */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: hsl(var(--rail-surface-muted));
+}
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: rail-shimmer 1.6s infinite;
+}
+.dark .skeleton-shimmer::after {
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 184, 0.12), transparent);
+}
+
+@keyframes rail-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* LIVE indicator dot */
+.live-dot {
+  position: relative;
+  display: inline-flex;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+.live-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  opacity: 0.5;
+  animation: rail-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes rail-ping {
+  75%,
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+/* Pulsing soft glow used by train markers */
+@keyframes rail-pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Safe area helpers for notched phones */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* MapLibre popups — match the RailGaadi look */
+.maplibregl-popup-content {
+  border-radius: 0.9rem !important;
+  box-shadow: var(--rail-shadow-lift) !important;
+  padding: 0.75rem 0.9rem !important;
+}
+.maplibregl-popup-tip {
+  display: none;
 }
 
 /* Custom scrollbar */
@@ -107,4 +290,10 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(156, 163, 175, 0.5);
+}
+
+/* Prevent horizontal scroll on any screen */
+html,
+body {
+  overflow-x: hidden;
 }

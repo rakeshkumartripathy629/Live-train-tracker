@@ -3,6 +3,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Loader2, KeyRound, Trash2, Plus, RefreshCw, Info } from 'lucide-react';
 import { RequireAuth } from '@/components/auth/RequireAuth';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { cn } from '@/utils/cn';
 
 interface RailRadarKey {
@@ -84,13 +85,12 @@ function AdminKeysInner() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
-      <div className="flex items-center gap-3">
-        <KeyRound className="h-7 w-7 text-rail-blue" />
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
-          RailRadar API Keys
-        </h1>
-      </div>
-      <p className="mt-2 flex items-start gap-2 text-sm text-slate-500 dark:text-slate-400">
+      <PageHeader
+        icon={<KeyRound />}
+        title="RailRadar API Keys"
+        description=""
+      />
+      <p className="mt-3 flex items-start gap-2 text-sm text-slate-500 dark:text-slate-400">
         <Info className="mt-0.5 h-4 w-4 shrink-0" />
         Free RailRadar keys stop working after their request budget. Add a new
         key here anytime — it goes live automatically, no server restart or

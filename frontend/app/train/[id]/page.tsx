@@ -8,6 +8,7 @@ import { useLiveJourneyStream } from '@/hooks/useLiveJourneyStream';
 import { JourneyCard } from '@/components/journey/JourneyCard';
 import { Timeline } from '@/components/journey/Timeline';
 import { LiveConnectionIndicator } from '@/components/journey/LiveConnectionIndicator';
+import { StatusBadge, TrainLiveStatus } from '@/components/journey/StatusBadge';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { ErrorCard } from '@/components/ui/ErrorCard';
 import { WeatherPanel } from '@/features/weather/WeatherPanel';
@@ -39,29 +40,6 @@ const TABS = [
 ] as const;
 
 type TabId = typeof TABS[number]['id'];
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; dot: string }> = {
-  running: {
-    label: 'Running',
-    color: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30 dark:text-emerald-400',
-    dot: 'bg-emerald-500 animate-pulse',
-  },
-  not_started: {
-    label: 'Not Started',
-    color: 'bg-slate-500/15 text-slate-600 border-slate-500/30 dark:text-slate-300',
-    dot: 'bg-slate-400',
-  },
-  completed: {
-    label: 'Journey Complete',
-    color: 'bg-sky-500/15 text-sky-700 border-sky-500/30 dark:text-sky-400',
-    dot: 'bg-sky-500',
-  },
-  cancelled: {
-    label: 'Cancelled',
-    color: 'bg-rose-500/15 text-rose-700 border-rose-500/30 dark:text-rose-400',
-    dot: 'bg-rose-500',
-  },
-};
 
 export default function TrainJourneyPage({ params }: { params: { id: string } }) {
   const trainId = params.id;
@@ -95,7 +73,7 @@ export default function TrainJourneyPage({ params }: { params: { id: string } })
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-xl bg-slate-200/60 dark:bg-slate-800/60 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:bg-slate-800 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -171,7 +149,7 @@ export default function TrainJourneyPage({ params }: { params: { id: string } })
     );
   }
 
-  const statusCfg = STATUS_CONFIG[journey.status] || STATUS_CONFIG.running;
+  const status = journey.status as TrainLiveStatus;
 
   // Build a lean SearchResult-compatible object for FavoriteButton
   const trainForFavorite = {
@@ -185,10 +163,10 @@ export default function TrainJourneyPage({ params }: { params: { id: string } })
   return (
     <div className="space-y-4 py-2">
       {/* ─── Top Bar ─── */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-xl bg-slate-200/60 dark:bg-slate-800/60 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-700 transition-colors"
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:bg-slate-800"
         >
           <ArrowLeft className="h-4 w-4" />
           Back
@@ -199,17 +177,14 @@ export default function TrainJourneyPage({ params }: { params: { id: string } })
           <button
             onClick={() => setTrackOpen(true)}
             title="Track this train on your journey"
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-3.5 py-2 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-rail-blue hover:text-white hover:border-rail-blue transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-rail-blue hover:text-white hover:border-rail-blue dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300"
           >
             <Luggage className="h-4 w-4" />
             <span className="hidden sm:inline">Track Journey</span>
           </button>
 
           {/* Status badge */}
-          <span className={cn('inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold', statusCfg.color)}>
-            <span className={cn('h-1.5 w-1.5 rounded-full', statusCfg.dot)} />
-            {statusCfg.label}
-          </span>
+          <StatusBadge status={status} />
 
           {/* Real-time stream indicator (Phase 7) — only when the logged-in user
               owns an ACTIVE journey for this train, else hidden (polling covers it) */}
@@ -254,13 +229,13 @@ export default function TrainJourneyPage({ params }: { params: { id: string } })
       )}
 
       {/* ─── Tab Selector ─── */}
-      <div className="flex items-center gap-1.5 rounded-2xl glass-panel p-1.5 shadow-glass w-fit flex-wrap">
+      <div className="flex items-center gap-1.5 rounded-2xl glass-panel p-1.5 shadow-glass w-full md:w-fit overflow-x-auto">
         {TABS.map(({ id, label, icon: Icon }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
             className={cn(
-              'flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold transition-all duration-200 whitespace-nowrap',
+              'flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold transition-all duration-200 whitespace-nowrap flex-shrink-0',
               activeTab === id
                 ? 'bg-rail-blue text-white shadow-glow'
                 : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'

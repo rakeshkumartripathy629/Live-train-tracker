@@ -15,6 +15,9 @@ import { LiveJourney, Station } from '@/types/train';
 import { StatusBadge } from '@/components/journey/StatusBadge';
 import { DelayBadge } from '@/components/journey/DelayBadge';
 import { ProgressRing } from '@/components/journey/ProgressRing';
+import { TrainAvatar } from '@/components/ui/TrainAvatar';
+import { LiveBadge, liveStateFromTimestamp } from '@/components/ui/LiveBadge';
+import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { formatTimeAgo } from '@/utils/format';
 
@@ -40,38 +43,46 @@ export function ActiveJourneyCard({ journey, live, isLoading }: ActiveJourneyCar
   const progress = live ? journeyProgress(journey, live.stations) : null;
 
   return (
-    <div className="glass-panel relative overflow-hidden rounded-3xl p-6 shadow-glass border border-emerald-500/20">
+    <div className="glass-panel relative overflow-hidden rounded-3xl p-5 sm:p-6 shadow-glass border border-emerald-500/20">
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-rail-blue" />
+
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="rounded-lg bg-rail-blue/10 px-2.5 py-1 font-mono text-xs font-bold text-rail-blue">
-              #{journey.trainNumber}
-            </span>
-            {!isLoading && live ? (
-              <StatusBadge status={live.status} />
-            ) : (
-              <StatusBadge status="unavailable" />
-            )}
+        <div className="flex items-start gap-3.5 min-w-0">
+          <TrainAvatar number={journey.trainNumber} size="lg" />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-md bg-rail-blue/10 px-2 py-0.5 font-mono text-xs font-bold text-rail-blue">
+                #{journey.trainNumber}
+              </span>
+              {!isLoading && live ? (
+                <StatusBadge status={live.status} />
+              ) : (
+                <StatusBadge status="unavailable" />
+              )}
+              {!isLoading && live && (
+                <LiveBadge state={liveStateFromTimestamp(live.lastUpdated)} />
+              )}
+            </div>
+            <h2 className="mt-1.5 truncate text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+              {journey.trainName}
+            </h2>
+            <p className="mt-1 inline-flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <CalendarDays className="h-3.5 w-3.5" />
+              {journey.journeyDate} · Your journey:
+              <span className="text-slate-700 dark:text-slate-200 font-bold">
+                {journey.boardingStationName} ({journey.boardingStationCode})
+              </span>
+              <ArrowRight className="h-3 w-3" />
+              <span className="text-slate-700 dark:text-slate-200 font-bold">
+                {journey.destinationStationName} ({journey.destinationStationCode})
+              </span>
+            </p>
           </div>
-          <h2 className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">
-            {journey.trainName}
-          </h2>
-          <p className="mt-1 inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 dark:text-slate-400">
-            <CalendarDays className="h-3.5 w-3.5" />
-            {journey.journeyDate} · Your journey:
-            <span className="text-slate-700 dark:text-slate-200 font-bold">
-              {journey.boardingStationName} ({journey.boardingStationCode})
-            </span>
-            <ArrowRight className="h-3 w-3" />
-            <span className="text-slate-700 dark:text-slate-200 font-bold">
-              {journey.destinationStationName} ({journey.destinationStationCode})
-            </span>
-          </p>
         </div>
 
         {!isLoading && live && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-shrink-0">
             <DelayBadge delayMinutes={live.delayMinutes} />
             <ProgressRing progress={progress ?? live.completionPercentage} size={62} strokeWidth={6} />
           </div>
@@ -153,12 +164,11 @@ export function ActiveJourneyCard({ journey, live, isLoading }: ActiveJourneyCar
             ? `Updated ${formatTimeAgo(live.lastUpdated)} · auto-refresh every 30s`
             : 'Live status pending'}
         </span>
-        <Link
-          href={`/journeys/${journey.id}`}
-          className="inline-flex items-center gap-2 rounded-xl bg-rail-blue px-4 py-2 text-xs font-bold text-white shadow-glow hover:bg-sky-600 transition-colors"
-        >
-          <Map className="h-4 w-4" />
-          View Live Map
+        <Link href={`/journeys/${journey.id}`}>
+          <Button variant="primary" size="md">
+            <Map className="h-4 w-4" />
+            View Live Map
+          </Button>
         </Link>
       </div>
     </div>
