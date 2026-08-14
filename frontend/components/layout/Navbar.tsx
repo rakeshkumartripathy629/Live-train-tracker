@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Train, Search, Heart, Map, Ticket, Bell, ArrowLeftRight, Luggage } from 'lucide-react';
+import { Train, Search, Heart, Map, Ticket, Bell, ArrowLeftRight, Luggage, Bot } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/utils/cn';
 import { useFavoritesStore } from '@/store/favorites';
@@ -21,6 +21,7 @@ export function Navbar() {
     { href: '/station', label: 'Stations', icon: Map, exact: false },
     { href: '/journeys', label: 'Journeys', icon: Luggage, exact: false },
     { href: '/alarms', label: 'Alerts', icon: Bell, exact: false },
+    { href: '/assistant', label: 'Assistant', icon: Bot, exact: false },
     { href: '/favorites', label: 'Favorites', icon: Heart, exact: false },
   ];
 

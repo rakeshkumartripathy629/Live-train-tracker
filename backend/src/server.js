@@ -15,6 +15,7 @@ const userRouter = require('./routes/user');
 const trackingRouter = require('./routes/tracking');
 const streamRouter = require('./routes/stream');
 const stationStreamRouter = require('./routes/station-stream');
+const aiRouter = require('./routes/ai');
 const { seedStationsFromRailRadar } = require('./services/stations');
 const { startWorker, stopWorker } = require('./workers/train-tracking/worker');
 const {
@@ -59,6 +60,7 @@ app.use('/api/v1/pnr', pnrRouter);
 app.use('/api/v1/alarms', alarmsRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/tracking', trackingRouter);
+app.use('/api/v1/ai', aiRouter);
 if (config.sse.enabled) {
   app.use('/api/v1/stream', streamRouter.router);
   app.use('/api/v1/stream/station', stationStreamRouter.router);
@@ -149,6 +151,17 @@ async function start() {
     seedStationsFromRailRadar()
       .then((r) => console.log(`[stations] registry seeded (${r.seeded} stations, alreadySeeded=${Boolean(r.alreadySeeded)})`))
       .catch((err) => console.error('[stations] seed failed:', err.message));
+  }
+
+  // Phase 10: AI assistant conversation memory.
+  if (db) {
+    try {
+      const { AiConversation, AiMessage } = require('./models/AiMessage');
+      await Promise.all([AiConversation.syncIndexes(), AiMessage.syncIndexes()]);
+      console.log('[ai] ai_conversations / ai_messages indexes synced');
+    } catch (err) {
+      console.error('[ai] index sync failed:', err.message);
+    }
   }
 
   const shutdown = async (signal) => {

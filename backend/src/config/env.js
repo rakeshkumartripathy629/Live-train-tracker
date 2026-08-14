@@ -68,6 +68,51 @@ const config = {
     // Live board default window (hours).
     boardWindowHours: parseInt(required('STATION_BOARD_WINDOW_HOURS', '4'), 10),
   },
+  // Real weather (OpenWeather) — used by the Phase 10 assistant weather tool.
+  // When absent the tool reports WEATHER_NOT_CONFIGURED instead of guessing.
+  openweather: {
+    apiKey: required('OPENWEATHER_API_KEY', ''),
+  },
+  // ─── Phase 10 — AI assistant ─────────────────────────────────────────
+  ai: {
+    // Provider: 'groq' (default), 'gemini', or 'openai'. All speak the
+    // OpenAI chat-completions protocol; only the base URL + default model
+    // differ. Empty apiKey => the assistant is disabled and /ai/chat
+    // answers 503 AI_NOT_CONFIGURED (never a fake reply).
+    provider: required('AI_PROVIDER', 'groq'),
+    model: required('AI_MODEL', ''),
+    apiKey: required('AI_API_KEY', ''),
+    baseUrl: required('AI_BASE_URL', ''),
+    // Default base URLs per provider (overridable via AI_BASE_URL).
+    defaultBaseUrls: {
+      groq: 'https://api.groq.com/openai/v1',
+      gemini: 'https://generativelanguage.googleapis.com/v1beta/openai',
+      openai: 'https://api.openai.com/v1',
+    },
+    defaultModels: {
+      groq: 'llama-3.3-70b-versatile',
+      gemini: 'gemini-2.0-flash',
+      openai: 'gpt-4o-mini',
+    },
+    temperature: parseFloat(required('AI_TEMPERATURE', '0.2')),
+    maxTokens: parseInt(required('AI_MAX_TOKENS', '1024'), 10),
+    // Hard cap on consecutive tool calls for a single user turn.
+    maxToolCalls: parseInt(required('AI_MAX_TOOL_CALLS', '6'), 10),
+    // Timeout for a single provider request (tool round or final answer).
+    requestTimeoutMs: parseInt(required('AI_REQUEST_TIMEOUT_MS', '45000'), 10),
+    // Conversation memory window (messages loaded per turn).
+    historyLimit: parseInt(required('AI_HISTORY_LIMIT', '20'), 10),
+    // Per-user rate limits (enforced via Upstash Redis when configured,
+    // with an in-memory fallback otherwise).
+    rateLimitPerMinute: parseInt(required('AI_RATE_LIMIT_PER_USER_PER_MINUTE', '10'), 10),
+    rateLimitPerDay: parseInt(required('AI_RATE_LIMIT_PER_USER_PER_DAY', '100'), 10),
+    // Global rolling token budget (spans all users).
+    monthlyTokenBudget: parseInt(required('AI_MONTHLY_TOKEN_BUDGET', '500000'), 10),
+    // Max characters of a single tool result sent back to the model.
+    maxToolOutputChars: parseInt(required('AI_MAX_TOOL_OUTPUT_CHARS', '6000'), 10),
+    // Max characters of a user message.
+    maxMessageChars: parseInt(required('AI_MAX_MESSAGE_CHARS', '4000'), 10),
+  },
 };
 
 module.exports = config;
