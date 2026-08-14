@@ -9,8 +9,9 @@ $procName = "cloudflared"
 
 function Get-TunnelUrl {
     if (-not (Test-Path $log)) { return $null }
-    $m = [regex]::Match((Get-Content $log -Raw), 'https://[a-z0-9-]+\.trycloudflare\.com')
-    return $m.Value
+    $m = [regex]::Matches((Get-Content $log -Raw), 'https://[a-z0-9-]+\.trycloudflare\.com')
+    if ($m.Count -eq 0) { return $null }
+    return $m[$m.Count - 1].Value
 }
 
 if ($Stop) {
