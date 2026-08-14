@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Train, Search, Heart, Map, Ticket, Bell, ArrowLeftRight, Luggage, Bot } from 'lucide-react';
+import { Train, Search, Heart, Map, Ticket, Bell, ArrowLeftRight, Luggage, Bot, KeyRound } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/utils/cn';
 import { useFavoritesStore } from '@/store/favorites';
@@ -23,6 +23,7 @@ export function Navbar() {
     { href: '/alarms', label: 'Alerts', icon: Bell, exact: false },
     { href: '/assistant', label: 'Assistant', icon: Bot, exact: false },
     { href: '/favorites', label: 'Favorites', icon: Heart, exact: false },
+    { href: '/admin/keys', label: 'Keys', icon: KeyRound, exact: false },
   ];
 
   return (

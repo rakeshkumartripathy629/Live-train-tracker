@@ -1,8 +1,11 @@
 const config = require('../config/env');
 const { cached } = require('./cache');
+const { getKeys, markExhausted } = require('./railradar-keys');
 
 const BASE = config.railradar.baseUrl;
-const KEY = config.railradar.apiKey;
+
+// Round-robin cursor so repeated calls spread across the healthy key pool.
+let rrCursor = 0;
 
 class RailRadarError extends Error {
   constructor(message, status, code) {
@@ -13,13 +16,13 @@ class RailRadarError extends Error {
   }
 }
 
-async function rrFetch(path, { timeoutMs = 8000, noStore = false } = {}) {
+async function doFetch(key, path, { timeoutMs, noStore }) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(`${BASE}${path}`, {
       headers: {
-        Authorization: `Bearer ${KEY}`,
+        Authorization: `Bearer ${key}`,
         'Content-Type': 'application/json',
       },
       cache: noStore ? 'no-store' : undefined,
@@ -48,6 +51,39 @@ async function rrFetch(path, { timeoutMs = 8000, noStore = false } = {}) {
   } finally {
     clearTimeout(timer);
   }
+}
+
+async function rrFetch(path, { timeoutMs = 8000, noStore = false } = {}) {
+  const keys = await getKeys();
+  if (!keys.length) {
+    throw new RailRadarError(
+      'RAILRADAR_NOT_CONFIGURED',
+      503,
+      'NOT_CONFIGURED'
+    );
+  }
+
+  const start = (rrCursor = (rrCursor + 1) % keys.length);
+  let lastErr = null;
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[(start + i) % keys.length];
+    try {
+      return await doFetch(key, path, { timeoutMs, noStore });
+    } catch (err) {
+      const rotatable =
+        err instanceof RailRadarError && [401, 403, 429].includes(err.status);
+      if (rotatable && keys.length > 1) {
+        // Quota/auth failure — retire this key and try the next one. When only
+        // one key exists we keep it so QUOTA_EXCEEDED surfaces to the caller.
+        markExhausted(key).catch(() => {});
+        lastErr = err;
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastErr;
 }
 
 // ─── Lookups ───────────────────────────────────────────────────────────

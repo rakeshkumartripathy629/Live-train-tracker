@@ -16,6 +16,7 @@ const trackingRouter = require('./routes/tracking');
 const streamRouter = require('./routes/stream');
 const stationStreamRouter = require('./routes/station-stream');
 const aiRouter = require('./routes/ai');
+const adminRouter = require('./routes/admin');
 const { seedStationsFromRailRadar } = require('./services/stations');
 const { startWorker, stopWorker } = require('./workers/train-tracking/worker');
 const {
@@ -61,6 +62,7 @@ app.use('/api/v1/alarms', alarmsRouter);
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/tracking', trackingRouter);
 app.use('/api/v1/ai', aiRouter);
+app.use('/api/v1/admin', adminRouter);
 if (config.sse.enabled) {
   app.use('/api/v1/stream', streamRouter.router);
   app.use('/api/v1/stream/station', stationStreamRouter.router);
@@ -161,6 +163,17 @@ async function start() {
       console.log('[ai] ai_conversations / ai_messages indexes synced');
     } catch (err) {
       console.error('[ai] index sync failed:', err.message);
+    }
+  }
+
+  // Phase 10.1: RailRadar key store.
+  if (db) {
+    try {
+      const RailRadarKey = require('./models/RailRadarKey');
+      await RailRadarKey.syncIndexes();
+      console.log('[keys] railradar_keys indexes synced');
+    } catch (err) {
+      console.error('[keys] index sync failed:', err.message);
     }
   }
 
